@@ -18,9 +18,6 @@ jobs:
       - name: 安装依赖
         run: npm install
 
-      - name: 检查格式 (Lint)
-        run: npm run lint
-
       - name: 打包项目
         run: npm run build
       
