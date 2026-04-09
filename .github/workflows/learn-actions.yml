@@ -1,26 +1,36 @@
-name: 前端 CI 流程
+name: 前端自动部署流程
+
 on:
   push:
-    branches: [ main ] # 只有 main 分支变动才跑
+    branches: [ main ] # 只有 main 分支提交才触发
+
+# 【深度知识】给予流水线修改仓库内容的权限（必须写在 jobs 同级或上方）
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
-  build:
+  build-and-deploy: # 任务 ID
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: 第一步：拉取代码
+        uses: actions/checkout@v4
 
-      - name: 安装 Node.js
+      - name: 第二步：安装 Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm' # 【深度优化】开启 npm 缓存，下次安装会极快
+          cache: 'npm'
 
-      - name: 安装依赖
+      - name: 第三步：安装依赖
         run: npm install
 
-      - name: 打包项目
+      - name: 第四步：打包项目
         run: npm run build
-      
-      - name: 测试读取密钥
-        run: echo "我的密钥是 ${{ secrets.MY_API_KEY }}"
-        # 注意：GitHub 会在日志里自动把这个密钥显示为 ***，这就是安全性。
+
+      - name: 第五步：部署到 GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3 # 这是一个现成的插件
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }} # 自动生成，不需要你配置
+          publish_dir: ./dist # 告诉插件把打包后的 dist 目录发出去
