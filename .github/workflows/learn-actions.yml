@@ -26,8 +26,11 @@ jobs:
       - name: 第三步：安装依赖
         run: npm install
 
-      - name: 第四步：打包项目
+      - name: 第四步：打包项目并注入变量
         run: npm run build
+        env:
+          VITE_BUILD_TIME: ${{ github.event.head_commit.timestamp }} # 获取提交时间
+          VITE_BUILD_AUTHOR: ${{ github.actor }} # 获取是谁提交的代码
 
       - name: 第五步：部署到 GitHub Pages
         uses: peaceiris/actions-gh-pages@v3 # 这是一个现成的插件
