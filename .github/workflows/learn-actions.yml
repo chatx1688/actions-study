@@ -1,0 +1,12 @@
+name: 学习流水线  # 流水线的名字
+on: [push]      # 触发条件：只要有代码 push，就执行
+
+jobs:
+  check-version: # 任务 ID
+    runs-on: ubuntu-latest # 在哪跑？GitHub 提供的最新 Ubuntu 虚拟机
+    steps:
+      - name: 第一步：拉取代码
+        uses: actions/checkout@v4 # 这是一个官方插件，用来把你的代码下载到虚拟机里
+
+      - name: 第二步：查看 Node 版本
+        run: node -v # 在虚拟机里执行 shell 命令
