@@ -1,12 +1,29 @@
-name: 学习流水线  # 流水线的名字
-on: [push]      # 触发条件：只要有代码 push，就执行
+name: 前端 CI 流程
+on:
+  push:
+    branches: [ main ] # 只有 main 分支变动才跑
 
 jobs:
-  check-version: # 任务 ID
-    runs-on: ubuntu-latest # 在哪跑？GitHub 提供的最新 Ubuntu 虚拟机
+  build:
+    runs-on: ubuntu-latest
     steps:
-      - name: 第一步：拉取代码
-        uses: actions/checkout@v4 # 这是一个官方插件，用来把你的代码下载到虚拟机里
+      - uses: actions/checkout@v4
 
-      - name: 第二步：查看 Node 版本
-        run: node -v # 在虚拟机里执行 shell 命令
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm' # 【深度优化】开启 npm 缓存，下次安装会极快
+
+      - name: 安装依赖
+        run: npm install
+
+      - name: 检查格式 (Lint)
+        run: npm run lint
+
+      - name: 打包项目
+        run: npm run build
+      
+      - name: 测试读取密钥
+        run: echo "我的密钥是 ${{ secrets.MY_API_KEY }}"
+        # 注意：GitHub 会在日志里自动把这个密钥显示为 ***，这就是安全性。
